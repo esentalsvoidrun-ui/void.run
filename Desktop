@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=VOIDRUN
+Comment=Launch VOIDRUN ritual terminal
+Exec=/usr/local/bin/voidrun
+Terminal=true
+Categories=Utility;
