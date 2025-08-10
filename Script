@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Paths
+BASE="${HOME}/EsentalsOS"
+mkdir -p "${BASE}/logg" "${BASE}/assets" "${BASE}/bin" "${BASE}/config"
+
+# Dependencies (best effort)
+need() { command -v "$1" >/dev/null 2>&1 || echo "⚠️ Missing: $1"; }
+for c in figlet cowsay neofetch lolcat pv; do need "$c"; done
+
+# Safe .bashrc backup (rotating)
+if [ -f "${HOME}/.bashrc" ]; then
+  ts=$(date +%Y%m%d_%H%M%S)
+  cp "${HOME}/.bashrc" "${BASE}/logg/.bashrc.backup.${ts}"
+fi
+
+# Minimal splash
+echo "---------------------------------------"
+figlet -f standard "VOIDRUN" 2>/dev/null || echo "VOIDRUN"
+echo "---------------------------------------"
+echo "🟣 Ritual start • $(date)"
+echo
+
+# Modes (light demo)
+echo "1) Splash   2) Retro   3) Glitch   4) Reflect   5) Quit"
+read -r -p "Choose: " ans || true
+case "${ans:-}" in
+  1) echo "✨ Splash";;
+  2) neofetch || true;;
+  3) { echo "GLITCHFIRE"; sleep 0.1; echo "GL1TCHF1RE"; } | lolcat || true;;
+  4) echo "## $(date +%F) — Reflection" >> "${BASE}/echo/echo_$(date +%Y%m%d).md";;
+  *) echo "Bye";;
+esac
