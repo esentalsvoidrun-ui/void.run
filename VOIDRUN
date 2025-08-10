@@ -1,0 +1,66 @@
+# VOIDRUN
+A human-first terminal layer: ritualized startup, reflective logging, glitch/retro aesthetics, and safe backups.
+
+## Quick start (manual install)
+- Save scripts locally (see `scripts/`) and make them executable.
+- Add the `.desktop` shortcut if you want a double-click launcher.
+- Optional: use `install.sh` for one-shot setup.
+
+## Roadmap
+- v0.1: Splash, Retro/Glitch modes, Reflect/Startday, Safe .bashrc backup/restore
+- v0.2: VOIDMAIL, Itch/Substack launcher, theme packs
+- v0.3: .deb packaging & Plymouth themeMIT License
+
+Copyright (c) 2025 VOIDRUN
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+... (MIT standardtexten) ...#!/usr/bin/env bash
+set -euo pipefail
+
+# Paths
+BASE="${HOME}/EsentalsOS"
+mkdir -p "${BASE}/logg" "${BASE}/assets" "${BASE}/bin" "${BASE}/config"
+
+# Dependencies (best effort)
+need() { command -v "$1" >/dev/null 2>&1 || echo "⚠️ Missing: $1"; }
+for c in figlet cowsay neofetch lolcat pv; do need "$c"; done
+
+# Safe .bashrc backup (rotating)
+if [ -f "${HOME}/.bashrc" ]; then
+  ts=$(date +%Y%m%d_%H%M%S)
+  cp "${HOME}/.bashrc" "${BASE}/logg/.bashrc.backup.${ts}"
+fi
+
+# Minimal splash
+echo "---------------------------------------"
+figlet -f standard "VOIDRUN" 2>/dev/null || echo "VOIDRUN"
+echo "---------------------------------------"
+echo "🟣 Ritual start • $(date)"
+echo
+
+# Modes (light demo)
+echo "1) Splash   2) Retro   3) Glitch   4) Reflect   5) Quit"
+read -r -p "Choose: " ans || true
+case "${ans:-}" in
+  1) echo "✨ Splash";;
+  2) neofetch || true;;
+  3) { echo "GLITCHFIRE"; sleep 0.1; echo "GL1TCHF1RE"; } | lolcat || true;;
+  4) echo "## $(date +%F) — Reflection" >> "${BASE}/echo/echo_$(date +%Y%m%d).md";;
+  *) echo "Bye";;
+esac#!/usr/bin/env bash
+set -euo pipefail
+
+DEST="/usr/local/bin"
+SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+sudo mkdir -p "${DEST}"
+sudo install -m 0755 "${SRC}/voidrun.sh" "${DEST}/voidrun"
+
+echo "✅ Installed: ${DEST}/voidrun"
+echo "Run: voidrun"[Desktop Entry]
+Type=Application
+Name=VOIDRUN
+Comment=Launch VOIDRUN ritual terminal
+Exec=/usr/local/bin/voidrun
+Terminal=true
+Categories=Utility;
